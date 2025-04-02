@@ -4,8 +4,12 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Exists, OuterRef
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_protect
+from django.middleware.csrf import get_token
 
-from .forms import LikeForm
+
+
 from .models import Quote, Like
 
 
@@ -24,12 +28,6 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
         queryset = Quote.objects.annotate(liked=Exists(Like.objects.filter(user=user, quote=OuterRef('pk'))))
         return queryset    
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form'] = LikeForm
-        return context
-    
-
 
 class QuoteDetailView(LoginRequiredMixin, generic.DetailView):
     model = Quote
@@ -72,17 +70,28 @@ class SignUpView(generic.CreateView):
     template_name = 'registration/sign_up.html'
 
 
+def get_csrf_token(request):
+    return JsonResponse({"csrfToken": get_token(request)})
+
+
+@csrf_protect
 def like(request, pk):
     quote = get_object_or_404(Quote, pk=pk)
     
     if request.method == 'POST':
         like_object = Like.objects.filter(user=request.user, quote=quote)
+        
+        # Toggle like status
         if like_object.exists():
             like_object.delete()
+            liked = False
         else:
-            form = LikeForm(request.POST)
-            if form.is_valid():
-                form.instance.user = request.user
-                form.instance.quote = quote
-                form.save()         
-    return redirect('quote_list')
+            Like.objects.create(user=request.user, quote=quote)
+            liked = True
+        
+        # Return a JSON response with the new like status
+        return JsonResponse({
+            'liked': liked,
+            'like_count': quote.count_likes(),  # You can modify this to show the total like count
+        })
+    return JsonResponse({'error': 'Invalid request'}, status=400)

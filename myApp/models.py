@@ -11,7 +11,7 @@ class Quote(models.Model):
     like_numbers = models.PositiveSmallIntegerField(default=0)
     
     def count_likes(self):
-        counter = len(Like.objects.filter(quote=self))
+        counter = Like.objects.filter(quote=self).count()
         self.like_numbers = counter
         self.save()
         return counter
