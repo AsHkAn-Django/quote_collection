@@ -1,4 +1,4 @@
-# Quote Interact  
+# Quote Collection App  
 An enhanced Django quote app with likes, AJAX updates, and threaded comments.
 
 ## Features  
@@ -9,7 +9,7 @@ An enhanced Django quote app with likes, AJAX updates, and threaded comments.
 ## Installation  
 ```bash
 git clone https://github.com/yourusername/quote-interact.git  
-cd quote-interact  
+cd quote_collection  
 pip install -r requirements.txt  
 python manage.py migrate  
 python manage.py runserver
