@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">List of all the Quotes:</h2>
+
+  {% for quote in quotes %}
+  <div class="container mt-4 px-4 pt-4 pb-1 rounded shadow {% if quote.liked %} bg-danger bg-opacity-10 {% endif %}">
+    <figure class="text-center">
+      <blockquote class="blockquote">
+        <a
+          href="{% url 'quote_detail' quote.id %}"
+          class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover fs-5 fw-semibold"
+        >
+          {{ quote.body }}
+        </a>
+      </blockquote>
+      <figcaption class="blockquote-footer mt-2">
+        By <cite title="Source Title">{{ quote.author }}</cite>
+      </figcaption>
+      <div class="d-flex justify-content-center align-items-center mt-2">
+        <form action="{% url 'like' quote.id %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="btn border-0 bg-transparent">
+            {% if quote.liked %}
+            <i class="bi bi-heart-fill text-danger fs-4"></i>
+            {% else %}
+            <i class="bi bi-heart text-dark fs-4"></i>
+            {% endif %}
+          </button>
+        </form>
+      </div>
+      <div class="footer">Likes: {{ quote.count_likes }}</div>
+    </figure>
+  </div>
+  {% endfor %}
+</div>
+{% endblock content %}

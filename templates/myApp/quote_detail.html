@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2>Detail Quote:</h2>
+      <div class="container mt-5">
+        <figcaption class="blockquote-header text-center text-white bg-dark">
+          Published By <cite title="Source Title">{{ quote.publisher }}</cite>
+        </figcaption>
+        <figure class="text-center">
+            <blockquote class="blockquote">
+              <p>{{ quote.body }}</p>
+            </blockquote>
+            <figcaption class="blockquote-footer">
+              By <cite title="Source Title">{{ quote.author }}</cite>
+            </figcaption>
+            <a href="{% url 'quote_edit' quote.id %}" class="btn btn-outline-warning">Edit</a>
+              <a href="{% url 'quote_delete' quote.id %}" class="btn btn-outline-danger">Delete</a>
+          </figure>
+      </div>
+  </div>
+{% endblock content %}
+  
