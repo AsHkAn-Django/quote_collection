@@ -1,12 +1,13 @@
 from django.views import generic  
 from django.urls import reverse_lazy
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Exists, OuterRef
 from django.http import JsonResponse
 
-from .models import Quote, Like
+from .models import Quote, Like, Comment, SubComment
+from .forms import CommentForm, SubCommentForm
 
 
 
@@ -25,9 +26,54 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
         return queryset    
     
 
-class QuoteDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Quote
-    template_name = 'myApp/quote_detail.html'
+def quote_detail(request, pk):
+    # Get the quote and related comments
+    quote = get_object_or_404(Quote, pk=pk)
+    comments = Comment.objects.filter(quote=quote)
+
+    # Initialize empty forms
+    comment_form = CommentForm()
+    subcomment_form = SubCommentForm()
+
+    return render(request, 'myApp/quote_detail.html', {
+        'quote': quote,
+        'comments': comments,
+        'comment_form': comment_form,
+        'subcomment_form': subcomment_form
+    })
+
+def add_comment(request, pk):
+    # Get the quote to associate the comment
+    quote = get_object_or_404(Quote, pk=pk)
+    
+    if request.method == "POST":
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.quote = quote
+            new_comment.publisher = request.user
+            new_comment.save()
+            return redirect('quote_detail', pk=quote.pk)  # Redirect to the same page after saving the comment
+    
+    return redirect('quote_detail', pk=quote.pk)  # Redirect back to the quote detail if the form isn't valid
+
+def add_subcomment(request, pk, comment_id):
+    # Get the quote and comment to associate the subcomment
+    quote = get_object_or_404(Quote, pk=pk)
+    comment = get_object_or_404(Comment, pk=comment_id)
+    
+    if request.method == "POST":
+        subcomment_form = SubCommentForm(request.POST)
+        if subcomment_form.is_valid():
+            new_subcomment = subcomment_form.save(commit=False)
+            new_subcomment.comment = comment
+            new_subcomment.quote = quote
+            new_subcomment.publisher = request.user
+            new_subcomment.save()
+            return redirect('quote_detail', pk=quote.pk)  # Redirect to the same page after saving the subcomment
+
+    return redirect('quote_detail', pk=quote.pk)  # Redirect back if the form isn't valid
+
 
 
 class QuoteUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):

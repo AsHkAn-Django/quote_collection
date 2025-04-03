@@ -8,23 +8,37 @@
   <h2 class="text-center mb-4">List of All the Quotes:</h2>
 
   {% for quote in quotes %}
-    <div class="p-5 text-center bg-body-tertiary rounded-3 mb-4">
-      <p class="lead">{{ quote.body }} - <strong>{{ quote.author }}</strong></p>
-      
-      <!-- Like button with Bootstrap heart icon -->
-      <div class="d-flex justify-content-center align-items-center">
-        <button class="btn btn-outline-danger like-button" 
+    <div class="container mt-5">
+        <div class="container mt-5">
+          <div class="p-5 text-center bg-body-tertiary rounded-3 mb-4">
+          <figcaption class="blockquote-header text-center text-white bg-secondary">
+            Published By <cite title="Source Title">{{ quote.publisher }}</cite>
+          </figcaption>
+          <figure class="text-center">
+              <blockquote class="blockquote">
+                <p>{{ quote.body }}</p>
+              </blockquote>
+              <figcaption class="blockquote-footer">
+                By <cite title="Source Title">{{ quote.author }}</cite>
+              </figcaption>
+              <button class="btn btn-outline-danger like-button" 
                 data-quote-id="{{ quote.pk }}" 
                 data-liked="{{ quote.liked }}">
-          {% if quote.liked %}
-            Unlike
-          {% else %}
-             Like
-          {% endif %}
-        </button>
-        <span class="m-3">{{ quote.count_likes }} likes</span> 
-      </div>
+                {% if quote.liked %}
+                  Unlike
+                {% else %}
+                  Like
+                {% endif %}
+                </button>
+                <span class="m-3">{{ quote.count_likes }} likes</span>
+                <div>
+                  <a href="{% url 'quote_detail' quote.id %}">more</a> 
+                </div>
+              </div>
+          </figure>
+        </div>
     </div>
+    </div>      
   {% endfor %}
 </div>
 {% endblock content %}

@@ -31,7 +31,7 @@ class Comment(models.Model):
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='comments')
     
     def __str__(self):
-        return f"{self.author.username}: {self.body[:50]}..."
+        return f"{self.publisher.username}: {self.body[:50]}..."
     
     
 class Like(models.Model):
@@ -48,6 +48,8 @@ class SubComment(models.Model):
     publisher = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
-    quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='sub_comments')
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
-    sub_comment = models.ForeignKey('self',on_delete=models.CASCADE, null=True, blank=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='sub_comments')
+    parent_subcomment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+
+    def __str__(self):
+        return f"{self.publisher.username}: {self.body[:50]}"
