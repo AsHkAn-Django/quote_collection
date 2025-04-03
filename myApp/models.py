@@ -42,3 +42,12 @@ class Like(models.Model):
     
     def __str__(self):
         return f"{self.user.username} Liked {self.quote.author} quote"
+    
+    
+class SubComment(models.Model):
+    publisher = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.CharField(max_length=250)
+    created_at = models.DateTimeField(auto_now_add=True)
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='sub_comments')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
+    sub_comment = models.ForeignKey('self',on_delete=models.CASCADE, null=True, blank=True)
