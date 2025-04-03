@@ -5,10 +5,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Exists, OuterRef
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_protect
-from django.middleware.csrf import get_token
-
-
 
 from .models import Quote, Like
 
@@ -70,11 +66,7 @@ class SignUpView(generic.CreateView):
     template_name = 'registration/sign_up.html'
 
 
-def get_csrf_token(request):
-    return JsonResponse({"csrfToken": get_token(request)})
 
-
-@csrf_protect
 def like(request, pk):
     quote = get_object_or_404(Quote, pk=pk)
     

@@ -1,14 +1,3 @@
-let csrfToken = "";
-
-// Fetch CSRF Token
-fetch("/get-csrf-token/")
-    .then(response => response.json())
-    .then(data => {
-        csrfToken = data.csrfToken;  // Store CSRF token
-    })
-    .catch(error => console.error("Error fetching CSRF token:", error));
-
-
 document.addEventListener("DOMContentLoaded", function() {
     const likeButtons = document.querySelectorAll('.like-button');
     
@@ -16,12 +5,14 @@ document.addEventListener("DOMContentLoaded", function() {
         button.addEventListener('click', function() {
             const quoteId = this.getAttribute('data-quote-id');
             const liked = this.getAttribute('data-liked') === 'true';  
+            const csrftoken = document.getElementById("csrf_token").value;  // Get CSRF token
+
             
             fetch(`/quote/quote_list/like/${quoteId}/`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken,  
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrftoken     // Use CSRF token from hidden input
                 },
                 body: JSON.stringify({})  
             })
@@ -34,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     } else {
                         this.textContent = 'Like';
                     }
-
                     // Update the like count
                     this.nextElementSibling.textContent = `${data.like_count} likes`;   
                 }

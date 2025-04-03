@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<!-- adding csrf -->
+<input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+
 <div class="container my-5">
   <h2 class="text-center mb-4">List of All the Quotes:</h2>
 
