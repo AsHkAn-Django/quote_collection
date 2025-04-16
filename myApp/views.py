@@ -3,7 +3,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.forms import UserCreationForm
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Count, Q
 from django.http import JsonResponse
 
 from .models import Quote, Like, Comment, SubComment
@@ -22,8 +22,11 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
     
     def get_queryset(self):
         user = self.request.user
-        queryset = Quote.objects.annotate(liked=Exists(Like.objects.filter(user=user, quote=OuterRef('pk'))))
-        return queryset    
+        queryset = Quote.objects.annotate(
+            liked=Exists(Like.objects.filter(user=user, quote=OuterRef('pk')))).annotate(
+                comments_num=(Count('comments', distinct=True) + Count('comments__sub_comments', distinct=True)))
+        return queryset
+        
     
 
 def quote_detail(request, pk):

@@ -30,7 +30,7 @@
                   Like
                 {% endif %}
                 </button>
-                <span class="m-3">{{ quote.count_likes }} likes</span>
+                <span class="m-3">{{ quote.count_likes }} likes & {{ quote.comments_num }} comments</span>
                 <div>
                   <a href="{% url 'quote_detail' quote.id %}">more</a> 
                 </div>
