@@ -1,0 +1,1 @@
+web: gunicorn quote_collection.wsgi:application
