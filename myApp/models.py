@@ -9,7 +9,7 @@ class Quote(models.Model):
     publisher = models.ForeignKey(User, on_delete=models.CASCADE)
     author = models.CharField(max_length=260)
     like_numbers = models.PositiveSmallIntegerField(default=0)
-    
+
     def count_likes(self):
         counter = Like.objects.filter(quote=self).count()
         self.like_numbers = counter
@@ -20,7 +20,7 @@ class Quote(models.Model):
         return f"{self.author}: {self.body[:50]}..."
 
     def get_absolute_url(self):
-        return reverse('quote_detail', kwargs={'pk': self.pk})
+        return reverse('myApp:quote_detail', kwargs={'pk': self.pk})
 
 
 
@@ -29,21 +29,21 @@ class Comment(models.Model):
     body = models.CharField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='comments')
-    
+
     def __str__(self):
         return f"{self.publisher.username}: {self.body[:50]}..."
-    
-    
+
+
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     like = models.BooleanField(default=False)
     quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"{self.user.username} Liked {self.quote.author} quote"
-    
-    
+
+
 class SubComment(models.Model):
     publisher = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.CharField(max_length=250)

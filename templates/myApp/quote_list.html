@@ -1,44 +1,38 @@
 {% extends 'base.html' %}
 
+{% block title %}All Quotes - QuoteHub{% endblock %}
+
 {% block content %}
-<!-- adding csrf -->
-<input type="hidden" id="csrf_token" value="{{ csrf_token }}">
+  <!-- CSRF token for JS interactions -->
+  <input type="hidden" id="csrf_token" value="{{ csrf_token }}">
 
-<div class="container my-5">
-  <h2 class="text-center mb-4">List of All the Quotes:</h2>
+  <div class="container my-5">
+    <h2 class="text-center mb-5">All Quotes</h2>
 
-  {% for quote in quotes %}
-    <div class="container mt-5">
-        <div class="container mt-5">
-          <div class="p-5 text-center bg-body-tertiary rounded-3 mb-4">
-          <figcaption class="blockquote-header text-center text-white bg-secondary">
-            Published By <cite title="Source Title">{{ quote.publisher }}</cite>
-          </figcaption>
-          <figure class="text-center">
-              <blockquote class="blockquote">
-                <p>{{ quote.body }}</p>
-              </blockquote>
-              <figcaption class="blockquote-footer">
-                By <cite title="Source Title">{{ quote.author }}</cite>
-              </figcaption>
-              <button class="btn btn-outline-danger like-button" 
-                data-quote-id="{{ quote.pk }}" 
-                data-liked="{{ quote.liked }}">
-                {% if quote.liked %}
-                  Unlike
-                {% else %}
-                  Like
-                {% endif %}
-                </button>
-                <span class="m-3">{{ quote.count_likes }} likes & {{ quote.comments_num }} comments</span>
-                <div>
-                  <a href="{% url 'quote_detail' quote.id %}">more</a> 
-                </div>
-              </div>
-          </figure>
+    {% for quote in quotes %}
+      <div class="card quote-card shadow-sm mb-4 mx-auto" style="max-width: 800px;">
+        <div class="card-header d-flex justify-content-between align-items-center bg-secondary text-white">
+          <span><i class="bi bi-person-circle"></i> {{ quote.publisher }}</span>
+          <small class="text-white-50">ID: {{ quote.pk }}</small>
         </div>
-    </div>
-    </div>      
-  {% endfor %}
-</div>
-{% endblock content %}
+        <div class="card-body">
+          <blockquote class="blockquote mb-3 fs-5 text-center">
+            <p class="mb-0">"{{ quote.body }}"</p>
+          </blockquote>
+          <footer class="blockquote-footer text-center">
+            <cite title="Author">{{ quote.author }}</cite>
+          </footer>
+          <div class="mt-4 d-flex justify-content-between align-items-center">
+            <button class="btn btn-outline-danger like-button" data-quote-id="{{ quote.pk }}" data-liked="{{ quote.liked }}">
+              {% if quote.liked %}<i class="bi bi-heart-fill text-danger"></i> Unlike{% else %}<i class="bi bi-heart"></i> Like{% endif %}
+            </button>
+            <span class="text-muted small">{{ quote.count_likes }} likes & {{ quote.comments_num }} comments</span>
+            <a href="{% url 'myApp:quote_detail' quote.id %}" class="btn btn-sm btn-outline-secondary">More</a>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">No quotes found. <a href="{% url 'myApp:quote_new' %}">Add one now</a>!</p>
+    {% endfor %}
+  </div>
+{% endblock %}

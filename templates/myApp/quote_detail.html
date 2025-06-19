@@ -1,62 +1,68 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
+{% block title %}Quote Detail - QuoteHub{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-  <h2 class="text-center mb-4">Quote Detail</h2>
+<div class="container mt-5" style="max-width: 900px;">
+  <h2 class="text-center mb-5">Quote Detail</h2>
 
   <!-- Quote Details Section -->
-  <div class="quote-details mb-4 p-3 border rounded bg-light">
-    <h3>{{ quote.body }}</h3>
-    <p><strong>Author:</strong> {{ quote.author }}</p>
-    <p><strong>Published By:</strong> {{ quote.publisher.username }}</p>
+  <div class="quote-details mb-5 p-4 border rounded bg-light shadow-sm">
+    <h3 class="fs-3 fst-italic text-center mb-3">“{{ quote.body }}”</h3>
+    <p class="text-center text-muted mb-2"><strong>Author:</strong> {{ quote.author }}</p>
+    <p class="text-center text-muted"><strong>Published By:</strong> {{ quote.publisher.username }}</p>
 
-    <!-- Comment Form -->
-    <div class="comment-form mt-4">
-      <h4>Add a Comment</h4>
-      <form method="POST" action="{% url 'add_comment' quote.pk %}">
-        {% csrf_token %}
-        {% bootstrap_form comment_form %}
-        <button type="submit" class="btn btn-primary">Post Comment</button>
-      </form>
-    </div>
+    {% if user == quote.publisher %}
+      <a href="{% url 'myApp:quote_edit' quote.pk %}" class="btn btn-outline-warning">Edit</a>
+      <a href="{% url 'myApp:quote_delete' quote.pk %}" class="btn btn-outline-danger">Delete</a>
+    {% endif %}
+
   </div>
 
   <!-- Comments Section -->
-  <div class="comments mt-4">
-    <h4>Comments</h4>
-    
+  <div class="comments">
+    <h4 class="mb-4">Comments</h4>
     {% for comment in comments %}
-      <div class="comment mb-4 p-3 border rounded bg-light">
+      <div class="comment mb-4 p-3 border rounded bg-white shadow-sm">
         <p><strong>{{ comment.publisher.username }}:</strong> {{ comment.body }}</p>
-        <p class="text-muted"><small>{{ comment.created_at }}</small></p>
+        <p class="text-muted"><small>{{ comment.created_at|date:"F j, Y, g:i a" }}</small></p>
 
         <!-- Subcomment Form (Reply to this comment) -->
         <div class="subcomment-form mt-3">
           <h5>Reply to this comment</h5>
-          <form method="POST" action="{% url 'add_subcomment' quote.pk comment.id %}">
+          <form method="POST" action="{% url 'myApp:add_subcomment' quote.pk comment.id %}">
             {% csrf_token %}
             {% bootstrap_form subcomment_form %}
-            <button type="submit" class="btn btn-secondary">Post Reply</button>
+            <button type="submit" class="btn btn-secondary mt-2">Post Reply</button>
           </form>
         </div>
 
         <!-- Subcomments (Replies) -->
-        <div class="subcomments mt-4 ml-4">
+        <div class="subcomments mt-4 ps-4 border-start">
           {% for subcomment in comment.sub_comments.all %}
-            <div class="subcomment mb-3 p-3 border-left">
+            <div class="subcomment mb-3 p-3 bg-light rounded">
               <p><strong>{{ subcomment.publisher.username }}:</strong> {{ subcomment.body }}</p>
-              <p class="text-muted"><small>{{ subcomment.created_at }}</small></p>
+              <p class="text-muted"><small>{{ subcomment.created_at|date:"F j, Y, g:i a" }}</small></p>
             </div>
           {% empty %}
-            <p>No replies yet. Be the first to reply!</p>
+            <p class="fst-italic text-muted">No replies yet. Be the first to reply!</p>
           {% endfor %}
         </div>
       </div>
     {% empty %}
-      <p>No comments yet. Be the first to comment!</p>
+      <p class="text-center fst-italic text-muted">No comments yet. Be the first to comment!</p>
     {% endfor %}
   </div>
-</div>
 
+    <!-- Comment Form -->
+    <div class="comment-form mb-5 p-4 border rounded bg-white shadow-sm">
+      <h4 class="mb-4">Add a Comment</h4>
+      <form method="POST" action="{% url 'myApp:add_comment' quote.pk %}">
+        {% csrf_token %}
+        {% bootstrap_form comment_form %}
+        <button type="submit" class="btn btn-primary mt-3">Post Comment</button>
+      </form>
+    </div>
+</div>
 {% endblock %}

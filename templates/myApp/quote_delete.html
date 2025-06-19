@@ -6,9 +6,8 @@
             {% csrf_token %}
             <h2>Are you sure you want to delete this quote?</h2>
             <button type="submit" class="btn btn-danger">Delete</button>
-            <a href="{% url 'quote_detail' quote.id %}" class="btn btn-secondary">Cancel</a>
+            <a href="{% url 'myApp:quote_detail' quote.id %}" class="btn btn-secondary">Cancel</a>
         </form>
-        
+
     </div>
 {% endblock content %}
-    

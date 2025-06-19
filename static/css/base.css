@@ -1,3 +1,13 @@
-body {
-  background-color: cornsilk;
+
+.navbar-brand {
+  font-weight: bold;
+}
+.quote-card {
+  max-width: 800px; margin: 1.5rem auto;
+}
+.quote-body {
+  font-size: 1.25rem;
+}
+.publisher-badge {
+  background: #6c757d; color: #fff;
 }

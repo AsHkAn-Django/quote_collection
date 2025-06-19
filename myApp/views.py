@@ -1,4 +1,4 @@
-from django.views import generic  
+from django.views import generic
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -19,15 +19,15 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
     model = Quote
     template_name = 'myApp/quote_list.html'
     context_object_name = 'quotes'
-    
+
     def get_queryset(self):
         user = self.request.user
         queryset = Quote.objects.annotate(
             liked=Exists(Like.objects.filter(user=user, quote=OuterRef('pk')))).annotate(
                 comments_num=(Count('comments', distinct=True) + Count('comments__sub_comments', distinct=True)))
         return queryset
-        
-    
+
+
 
 def quote_detail(request, pk):
     # Get the quote and related comments
@@ -48,7 +48,7 @@ def quote_detail(request, pk):
 def add_comment(request, pk):
     # Get the quote to associate the comment
     quote = get_object_or_404(Quote, pk=pk)
-    
+
     if request.method == "POST":
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
@@ -56,15 +56,15 @@ def add_comment(request, pk):
             new_comment.quote = quote
             new_comment.publisher = request.user
             new_comment.save()
-            return redirect('quote_detail', pk=quote.pk)  # Redirect to the same page after saving the comment
-    
-    return redirect('quote_detail', pk=quote.pk)  # Redirect back to the quote detail if the form isn't valid
+            return redirect('myApp:quote_detail', pk=quote.pk)  # Redirect to the same page after saving the comment
+
+    return redirect('myApp:quote_detail', pk=quote.pk)  # Redirect back to the quote detail if the form isn't valid
 
 def add_subcomment(request, pk, comment_id):
     # Get the quote and comment to associate the subcomment
     quote = get_object_or_404(Quote, pk=pk)
     comment = get_object_or_404(Comment, pk=comment_id)
-    
+
     if request.method == "POST":
         subcomment_form = SubCommentForm(request.POST)
         if subcomment_form.is_valid():
@@ -73,9 +73,9 @@ def add_subcomment(request, pk, comment_id):
             new_subcomment.quote = quote
             new_subcomment.publisher = request.user
             new_subcomment.save()
-            return redirect('quote_detail', pk=quote.pk)  # Redirect to the same page after saving the subcomment
+            return redirect('myApp:quote_detail', pk=quote.pk)  # Redirect to the same page after saving the subcomment
 
-    return redirect('quote_detail', pk=quote.pk)  # Redirect back if the form isn't valid
+    return redirect('myApp:quote_detail', pk=quote.pk)  # Redirect back if the form isn't valid
 
 
 
@@ -92,7 +92,7 @@ class QuoteUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateVie
 class QuoteDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Quote
     template_name = 'myApp/quote_delete.html'
-    success_url = reverse_lazy('quote_list')
+    success_url = reverse_lazy('myApp:quote_list')
 
     def test_func(self):
         obj = self.get_object()
@@ -103,7 +103,7 @@ class QuoteCreateView(LoginRequiredMixin, generic.CreateView):
     model = Quote
     template_name = "myApp/quote_new.html"
     fields = ['body', 'author']
-    
+
     def form_valid(self, form):
         form.instance.publisher = self.request.user
         return super().form_valid(form)
@@ -118,10 +118,10 @@ class SignUpView(generic.CreateView):
 
 def like(request, pk):
     quote = get_object_or_404(Quote, pk=pk)
-    
+
     if request.method == 'POST':
         like_object = Like.objects.filter(user=request.user, quote=quote)
-        
+
         # Toggle like status
         if like_object.exists():
             like_object.delete()
@@ -129,7 +129,7 @@ def like(request, pk):
         else:
             Like.objects.create(user=request.user, quote=quote)
             liked = True
-        
+
         # Return a JSON response with the new like status
         return JsonResponse({
             'liked': liked,

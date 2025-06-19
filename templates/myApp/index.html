@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="container">
-        <h1>Welcome to Quote Collection</h1>
-        <h2>Here you can add your favorite Quote and read others' quotes</h2>
-        <p>For see the list of quotes <a href="{% url 'quote_list' %}">click here</a></p>
-    </div>
-{% endblock content %}
-    
+<div class="text-center py-5">
+<h1 class="display-4">Welcome to QuoteHub</h1>
+<p class="lead text-muted">Add your favorite quotes and explore inspiring words from others.</p>
+<a href="{% url 'myApp:quote_list' %}" class="btn btn-primary btn-lg mt-3">View Quotes</a>
+</div>
+{% endblock %}
