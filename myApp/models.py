@@ -36,8 +36,7 @@ class Comment(models.Model):
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    like = models.BooleanField(default=False)
-    quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE, related_name='quote_likes')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
