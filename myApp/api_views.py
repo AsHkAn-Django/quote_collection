@@ -9,7 +9,7 @@ from .serializers import QuoteSerializer, LikeSerializer, CommentSerializer
 
 
 class QuoteViewSet(viewsets.ModelViewSet):
-    queryset = Quote.objects.all()
+    queryset = Quote.objects.all().order_by('id')
     serializer_class = QuoteSerializer
 
     @action(detail=True, methods=['get'])

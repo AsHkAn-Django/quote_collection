@@ -9,6 +9,7 @@ class Quote(models.Model):
     publisher = models.ForeignKey(User, on_delete=models.CASCADE)
     author = models.CharField(max_length=260)
     like_numbers = models.PositiveSmallIntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
 
     def count_likes(self):
         counter = Like.objects.filter(quote=self).count()

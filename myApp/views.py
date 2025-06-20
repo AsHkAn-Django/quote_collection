@@ -19,6 +19,7 @@ class QuoteListView(LoginRequiredMixin, generic.ListView):
     model = Quote
     template_name = 'myApp/quote_list.html'
     context_object_name = 'quotes'
+    paginate_by = 3
 
     def get_queryset(self):
         user = self.request.user
