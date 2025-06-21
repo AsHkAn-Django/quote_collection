@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import sys
 from pathlib import Path
 import environ
 import dj_database_url
@@ -86,16 +87,17 @@ WSGI_APPLICATION = 'quote_collection.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if 'test' in sys.argv:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
-
-DATABASES["default"] = dj_database_url.parse(env.str("DATABASE_URL"))
-
-
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(env.str("DATABASE_URL"))
+    }
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -148,6 +150,9 @@ LOGOUT_REDIRECT_URL = 'myApp:home'
 
 # Restframework Config
 REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
-    'PAGE_SIZE': 5
+    'PAGE_SIZE': 5,
 }

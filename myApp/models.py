@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 
-
 class Quote(models.Model):
     body = models.CharField(max_length=500)
     publisher = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -22,7 +21,6 @@ class Quote(models.Model):
 
     def get_absolute_url(self):
         return reverse('myApp:quote_detail', kwargs={'pk': self.pk})
-
 
 
 class Comment(models.Model):

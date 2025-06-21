@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from .models import Quote, Comment, SubComment, Like
+from .models import Quote, Comment, Like
 from .serializers import QuoteSerializer, LikeSerializer, CommentSerializer
 
 
@@ -25,3 +25,6 @@ class QuoteViewSet(viewsets.ModelViewSet):
         comments = Comment.objects.filter(quote=quote)
         serializer = CommentSerializer(comments, many=True)
         return Response({'comments': serializer.data})
+
+    def perform_create(self, serializer):
+        serializer.save(publisher=self.request.user)
